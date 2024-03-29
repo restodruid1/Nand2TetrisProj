@@ -7,7 +7,7 @@ class Parser():
         self.currentCommand = None
         self.allow = False
         self.command = True
-        #self.arg2 = None
+        
 
     def openFile(self):
         try:
@@ -65,16 +65,233 @@ class Parser():
 
 class CodeWriter():
     def __init__(self, outFile):
-        self.file = outFile
+        self.fileName = outFile.replace("vm", "asm")
+        self.file = None
+        self.counter = 0
 
+    def openFile(self):
+        self.file = open(self.fileName, 'w')
+        
     def writeArithmetic(self, command):
-        pass
+        self.file.write(f"// {command}\n")
+        if command == "add":
+            self.file.write("@SP\n"
+                            "AM=M-1\n"
+                            "D=M\n"
+                            "A=A-1\n"
+                            "M=D+M\n\n")
+        elif command == "sub":
+            self.file.write("@SP\n"
+                            "AM=M-1\n"
+                            "D=M\n"
+                            "A=A-1\n"
+                            "M=M-D\n\n")
+        elif command == "neg":
+            self.file.write("@SP\n"
+                            "A=M\n"
+                            "A=A-1\n"
+                            "M=-M\n\n")
+        elif command == "eq":
+            self.file.write("@SP\n"
+                            "AM=M-1\n"
+                            "D=M\n"
+                            "@SP\n"
+                            "AM=M-1\n"
+                            "D=M-D\n"
+                            f"@JEQ_TRUE_{self.counter}\n"
+                            "D;JEQ\n"
+                            "D=0\n"
+                            f"@JEQ_FALSE_{self.counter}\n"
+                            "0;JMP\n"
+                            f"(JEQ_TRUE_{self.counter})\n"
+                            "D=-1\n"
+                            f"(JEQ_FALSE_{self.counter})\n"
+                            "@SP\n"
+                            "A=M\n"
+                            "M=D\n"
+                            "@SP\n"
+                            "M=M+1\n\n")
+            self.counter += 1
+        elif command == "gt":
+            self.file.write("@SP\n"
+                            "AM=M-1\n"
+                            "D=M\n"
+                            "@SP\n"
+                            "AM=M-1\n"
+                            "D=M-D\n"
+                            f"@JGT_TRUE_{self.counter}\n"
+                            "D;JGT\n"
+                            "D=0\n"
+                            f"@JGT_FALSE_{self.counter}\n"
+                            "0;JMP\n"
+                            f"(JGT_TRUE_{self.counter})\n"
+                            "D=-1\n"
+                            f"(JGT_FALSE_{self.counter})\n"
+                            "@SP\n"
+                            "A=M\n"
+                            "M=D\n"
+                            "@SP\n"
+                            "M=M+1\n\n") 
+            self.counter += 1
+        elif command == "lt":
+            self.file.write("@SP\n"
+                            "AM=M-1\n"
+                            "D=M\n"
+                            "@SP\n"
+                            "AM=M-1\n"
+                            "D=M-D\n"
+                            f"@JLT_TRUE_{self.counter}\n"
+                            "D;JLT\n"
+                            "D=0\n"
+                            f"@JLT_FALSE_{self.counter}\n"
+                            "0;JMP\n"
+                            f"(JLT_TRUE_{self.counter})\n"
+                            "D=-1\n"
+                            f"(JLT_FALSE_{self.counter})\n"
+                            "@SP\n"
+                            "A=M\n"
+                            "M=D\n"
+                            "@SP\n"
+                            "M=M+1\n\n")
+            self.counter += 1
+        elif command == "and":
+            self.file.write("@SP\n"
+                            "AM=M-1\n"
+                            "D=M\n"
+                            "A=A-1\n"
+                            "M=D&M\n\n")
+        elif command == "or":
+            self.file.write("@SP\n"
+                            "AM=M-1\n"
+                            "D=M\n"
+                            "A=A-1\n"
+                            "M=D|M\n\n")
+        elif command == "not":
+            self.file.write("@SP\n"
+                            "A=M\n"
+                            "A=A-1\n"
+                            "M=!M\n\n")
+        elif command == "end":
+            self.file.write("(END)"
+                            "@END"
+                            "0;JMP")       
 
     def writePushPop(self, command, segment, index):
-        pass
-
-    def close():
-        pass
+        self.file.write(f"// {command} {segment} {index}\n")
+        tmp = {"local": "LCL", "argument": "ARG", "this": "THIS", "that": "THAT" }
+        
+        if command == "push":
+            if segment == "constant":
+                self.file.write(f"@{index}\n"
+                            "D=A\n"
+                            "@SP\n"
+                            "A=M\n"
+                            "M=D\n"
+                            "@SP\n"
+                            "M=M+1\n\n")
+            elif segment in ['static','temp','pointer']:                   
+                if segment == 'static':
+                    self.file.write(f"@16\n"
+                            "D=A\n"
+                            f"@{index}\n"
+                            "A=D+A\n"       
+                            "D=M\n"
+                            "@SP\n"
+                            "A=M\n"
+                            "M=D\n"
+                            "@SP\n"
+                            "M=M+1\n\n")
+                if segment == 'pointer':
+                    self.file.write(f"@R{3+int(index)}\n"
+                            "D=A\n"
+                            f"@{3+int(index)}\n"
+                            #"A=D+A\n"          
+                            "D=M\n"
+                            "@SP\n"
+                            "A=M\n"
+                            "M=D\n"
+                            "@SP\n"
+                            "M=M+1\n\n")
+                if segment == "temp":
+                    self.file.write(f"@{5+int(index)}\n"
+                                "D=A\n"
+                                f"@{5+int(index)}\n" #
+                                #"A=D+A\n"   #
+                                "D=M\n" #
+                                "@SP\n" #
+                                "A=M\n" #
+                                "M=D\n" #   
+                                "@SP\n"
+                                "M=M+1\n\n")
+            elif segment in tmp:
+                self.file.write(f"@{tmp[segment]}\n"
+                                "D=M\n"
+                                f"@{index}\n"
+                                "A=D+A\n"
+                                "D=M\n"
+                                "@SP\n"
+                                "A=M\n"
+                                "M=D\n"
+                                "@SP\n"
+                                "M=M+1\n\n")
+        else: # command == "pop"
+            if segment == "static":
+                self.file.write(f"@16\n"
+                                "D=A\n" 
+                                f"@{index}\n"
+                                "D=D+A\n"
+                                "@R13\n"
+                                "M=D\n"
+                                "@SP\n"
+                                "AM=M-1\n"
+                                "D=M\n"
+                                "@R13\n"
+                                "A=M\n"
+                                "M=D\n\n")
+            else:
+                if segment in tmp:
+                    self.file.write(f"@{tmp[segment]}\n"
+                                "D=M\n" 
+                                f"@{index}\n"
+                                "D=D+A\n"
+                                "@R13\n"
+                                "M=D\n"
+                                "@SP\n"
+                                "AM=M-1\n"
+                                "D=M\n"
+                                "@R13\n"
+                                "A=M\n"
+                                "M=D\n\n")
+                elif segment == "pointer":
+                    self.file.write(f"@R{3+int(index)}\n"
+                                "D=M\n" 
+                                f"@{3+int(index)}\n"
+                                "D=D+A\n"
+                                "@R13\n"
+                                "M=D\n"
+                                "@SP\n"
+                                "AM=M-1\n"
+                                "D=M\n"
+                                "@R13\n"
+                                "A=M\n"
+                                "M=D\n\n")
+                elif segment == "temp":
+                    self.file.write(f"@R{5+int(index)}\n"
+                                "D=M\n" 
+                                f"@{5+int(index)}\n"
+                                "D=D+A\n"
+                                "@R13\n"
+                                "M=D\n"
+                                "@SP\n"
+                                "AM=M-1\n"
+                                "D=M\n"
+                                "@R13\n"
+                                "A=M\n"
+                                "M=D\n\n")
+        
+        
+    def close(self):
+        self.file.close()
 
 
 
@@ -82,6 +299,8 @@ root = sys.argv[1]  # Input VM file
 
 parser = Parser(root)
 parser.openFile()
+codeWriter = CodeWriter(root)
+codeWriter.openFile()
 
 
 while parser.hasMoreLines() == True:
@@ -94,7 +313,9 @@ while parser.hasMoreLines() == True:
     if parser.command == False:
         arg2 = parser.arg2()
         print(instrType,arg1,arg2)
+        codeWriter.writePushPop(parser.currentCommand[0],parser.currentCommand[1],parser.currentCommand[2])
     else:
         print(instrType,arg1)
+        codeWriter.writeArithmetic(parser.currentCommand[0])
 
-
+codeWriter.close()
