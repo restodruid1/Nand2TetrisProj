@@ -1,0 +1,285 @@
+class HangManGame{
+    field String gameWord, incorrectLetters;
+    field int incorrectGuesses;
+    field bool winLose;
+    
+    constructor HangManGame new(){
+        let gameWord = "HELLO WORLD";
+        let incorrectLetters = String.new(14);
+        let incorrectGuesses = 0;
+        let winLose = false;
+
+        do drawHangManInterface();
+        do drawWord();
+
+        return this;
+    }
+ 
+
+    method void drawWord(){
+        do Screen.drawLine(148,235,158,235);
+        do Screen.drawLine(178,235,188,235);
+        do Screen.drawLine(208,235,218,235);
+        do Screen.drawLine(238,235,248,235);
+        do Screen.drawLine(268,235,278,235);
+
+        do Screen.drawLine(355,235,365,235);
+        do Screen.drawLine(385,235,395,235);
+        do Screen.drawLine(415,235,425,235);
+        do Screen.drawLine(445,235,455,235);
+        do Screen.drawLine(475,235,485,235);
+        return;
+    }
+    
+    method void drawHangManInterface(){
+        // Render hangman post
+        do Screen.drawLine(235,75,235,200);
+        do Screen.drawLine(215,200,260,200);
+        do Screen.drawLine(235,75,270,75);
+        do Screen.drawLine(270,75,270,90);
+        return;
+    }
+
+    
+    method void drawCorrectLetters(char letter){
+        var int memAddress;
+        var int i;
+        //let memAddress = 16384+location;
+        if (letter = gameWord.charAt(6)){
+            let memAddress = 16384+6870;
+            do Memory.poke(memAddress+0, -16381);
+            do Memory.poke(memAddress+32, -16381);
+            do Memory.poke(memAddress+64, -16381);
+            do Memory.poke(memAddress+96, -16381);
+            do Memory.poke(memAddress+128, -16381);
+            do Memory.poke(memAddress+160, -16381);
+            do Memory.poke(memAddress+192, -16381);
+            do Memory.poke(memAddress+224, -16381);
+            do Memory.poke(memAddress+256, -16381);
+            do Memory.poke(memAddress+288, -15997);
+            do Memory.poke(memAddress+320, -15997);
+            do Memory.poke(memAddress+352, -15997);
+            do Memory.poke(memAddress+384, -15997);
+            do Memory.poke(memAddress+416, -15997);
+            do Memory.poke(memAddress+448, -1);
+            do Memory.poke(memAddress+480, -1);
+        }
+        if (letter = gameWord.charAt(4)){
+            // draw O
+            let i = 2;
+            while (i>0){
+                if (i = 2) {
+                    let memAddress = 16384+6865;
+                }
+                else {
+                    let memAddress = 16384+6872;
+                }
+                let i = i - 1;
+                do Memory.poke(memAddress+0, -1);
+                do Memory.poke(memAddress+32, -1);
+                do Memory.poke(memAddress+64, -16381);
+                do Memory.poke(memAddress+96, -16381);
+                do Memory.poke(memAddress+128, -16381);
+                do Memory.poke(memAddress+160, -16381);
+                do Memory.poke(memAddress+192, -16381);
+                do Memory.poke(memAddress+224, -16381);
+                do Memory.poke(memAddress+256, -16381);
+                do Memory.poke(memAddress+288, -16381);
+                do Memory.poke(memAddress+320, -16381);
+                do Memory.poke(memAddress+352, -16381);
+                do Memory.poke(memAddress+384, -16381);
+                do Memory.poke(memAddress+416, -16381);
+                do Memory.poke(memAddress+448, -1);
+                do Memory.poke(memAddress+480, -1);
+            }
+           
+        }
+        if (letter = gameWord.charAt(8)){
+            // draw R
+            let memAddress = 16384+6874;
+            do Memory.poke(memAddress+0, -1);
+            do Memory.poke(memAddress+32, -1);
+            do Memory.poke(memAddress+64, -16381);
+            do Memory.poke(memAddress+96, -16381);
+            do Memory.poke(memAddress+128, -16381);
+            do Memory.poke(memAddress+160, -16381);
+            do Memory.poke(memAddress+192, -1);
+            do Memory.poke(memAddress+224, -1);
+            do Memory.poke(memAddress+256, 899);
+            do Memory.poke(memAddress+288, 1795);
+            do Memory.poke(memAddress+320, 3587);
+            do Memory.poke(memAddress+352, 7171);
+            do Memory.poke(memAddress+384, 14339);
+            do Memory.poke(memAddress+416, 28675);
+            do Memory.poke(memAddress+448, -8189);
+            do Memory.poke(memAddress+480, -16381);
+        }
+        if (letter = gameWord.charAt(2)){
+            // draw L
+            let i = 3;
+            while (i>0){
+                if (i = 3){
+                    let memAddress = 16384+6861;
+                }
+                if (i = 2) {
+                    let memAddress = 16384+6863;
+                }
+                if (i = 1){
+                    let memAddress = 16384+6876;
+                }
+                let i = i - 1;
+            
+                do Memory.poke(memAddress+0, 3);
+                do Memory.poke(memAddress+32, 3);
+                do Memory.poke(memAddress+64, 3);
+                do Memory.poke(memAddress+96, 3);
+                do Memory.poke(memAddress+128, 3);
+                do Memory.poke(memAddress+160, 3);
+                do Memory.poke(memAddress+192, 3);
+                do Memory.poke(memAddress+224, 3);
+                do Memory.poke(memAddress+256, 3);
+                do Memory.poke(memAddress+288, 3);
+                do Memory.poke(memAddress+320, 3);
+                do Memory.poke(memAddress+352, 3);
+                do Memory.poke(memAddress+384, 3);
+                do Memory.poke(memAddress+416, 3);
+                do Memory.poke(memAddress+448, -1);
+                do Memory.poke(memAddress+480, -1);
+            }
+        }
+        if (letter = gameWord.charAt(10)){
+            // draw D
+            let memAddress = 16384+6878;
+            do Memory.poke(memAddress+0, 8191);
+            do Memory.poke(memAddress+32, 16383);
+            do Memory.poke(memAddress+64, 24579);
+            do Memory.poke(memAddress+96, -16381);
+            do Memory.poke(memAddress+128, -16381);
+            do Memory.poke(memAddress+160, -16381);
+            do Memory.poke(memAddress+192, -16381);
+            do Memory.poke(memAddress+224, -16381);
+            do Memory.poke(memAddress+256, -16381);
+            do Memory.poke(memAddress+288, -16381);
+            do Memory.poke(memAddress+320, -16381);
+            do Memory.poke(memAddress+352, -16381);
+            do Memory.poke(memAddress+384, -16381);
+            do Memory.poke(memAddress+416, 24579);
+            do Memory.poke(memAddress+448, 16383);
+            do Memory.poke(memAddress+480, 8191);
+        }
+        if (letter = gameWord.charAt(0)){
+            // draw H
+            let memAddress = 16384+6857;
+            do Memory.poke(memAddress+0, -16381);
+            do Memory.poke(memAddress+32, -16381);
+            do Memory.poke(memAddress+64, -16381);
+            do Memory.poke(memAddress+96, -16381);
+            do Memory.poke(memAddress+128, -16381);
+            do Memory.poke(memAddress+160, -16381);
+            do Memory.poke(memAddress+192, -16381);
+            do Memory.poke(memAddress+224, -1);
+            do Memory.poke(memAddress+256, -1);
+            do Memory.poke(memAddress+288, -16381);
+            do Memory.poke(memAddress+320, -16381);
+            do Memory.poke(memAddress+352, -16381);
+            do Memory.poke(memAddress+384, -16381);
+            do Memory.poke(memAddress+416, -16381);
+            do Memory.poke(memAddress+448, -16381);
+            do Memory.poke(memAddress+480, -16381);
+        }
+        if (letter = gameWord.charAt(1)){
+            // draw E
+            let memAddress = 16384+6859;
+            do Memory.poke(memAddress+0, -1);
+            do Memory.poke(memAddress+32, -1);
+            do Memory.poke(memAddress+64, 3);
+            do Memory.poke(memAddress+96, 3);
+            do Memory.poke(memAddress+128, 3);
+            do Memory.poke(memAddress+160, 3);
+            do Memory.poke(memAddress+192, 3);
+            do Memory.poke(memAddress+224, -1);
+            do Memory.poke(memAddress+256, -1);
+            do Memory.poke(memAddress+288, 3);
+            do Memory.poke(memAddress+320, 3);
+            do Memory.poke(memAddress+352, 3);
+            do Memory.poke(memAddress+384, 3);
+            do Memory.poke(memAddress+416, 3);
+            do Memory.poke(memAddress+448, -1);
+            do Memory.poke(memAddress+480, -1);
+        }
+       
+        return;
+    }
+
+    method void drawHangManBodyParts(){
+        if (incorrectGuesses = 1){
+            do Screen.drawCircle(270,100,10);
+        }
+        if (incorrectGuesses = 2){
+            do Screen.drawLine(270,110,270,160);
+        }
+        if (incorrectGuesses = 3){
+            do Screen.drawLine(270,125,250,140);
+        }
+        if (incorrectGuesses = 4){
+            do Screen.drawLine(270,125,290,140);
+        }
+        if (incorrectGuesses = 5){
+            do Screen.drawLine(270,160,250,180);
+        }
+        if (incorrectGuesses = 6){
+            do Screen.drawLine(270,160,290,180);
+        }
+        return;
+    }
+
+    method bool getWinLose () {
+        return winLose;
+    }
+
+    method void run(){
+        var char c;
+        var int i;
+        var int total;
+        var bool success;
+
+        let total = 0;
+        let success = false;
+        let i = 0;
+        
+
+        while (incorrectGuesses < 7) {
+            if (total > 9) {
+                let winLose = true;
+                return;
+            }
+            let c = Keyboard.readChar();
+            
+            while (i < gameWord.length()){
+                
+                if (c = gameWord.charAt(i)){                   
+                    do drawCorrectLetters(c);    
+                    let success = true;
+                    let total = total + 1;
+                }             
+                let i = i + 1;
+
+            }
+            if (success = false){
+                let incorrectGuesses = incorrectGuesses + 1;
+                do Output.printString(" INCORRECT GUESSES: ");            
+                do incorrectLetters.appendChar(c);               
+                do Output.printString(incorrectLetters);
+
+                do drawHangManBodyParts();
+                
+            }
+            do Output.println();
+            let success = false;
+            let i = 0;
+            
+        }
+        return;
+    }
+
+}
