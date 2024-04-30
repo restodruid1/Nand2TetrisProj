@@ -1,5 +1,6 @@
-symbol  = "(){}.;[],+-*&|<>=~"
+symbol  = "(){}.;[],+-*&|<>=~/"
 keyword = ["class", "constructor", "function", "method", "field", "static", "var", "int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if", "else", "while", "return"]
+
 class JackTokenizer():
     inputFile = ""
     openFile = ""
@@ -23,18 +24,12 @@ class JackTokenizer():
         while self.nextLine:
                     
             if self.nextLine.strip() == "" or self.nextLine.strip()[0] == "/" or self.nextLine.strip()[0] == "*":
-                self.nextLine = self.openFile.readline()
-                continue               
+                self.nextLine = self.openFile.readline()               
             else:
                 # Tokenize each item of every line in the input file
                 self.createTokenList()
                 self.nextLine = self.openFile.readline()
 
-        """if self.inst == True:
-            self.inst = False
-        if self.inst == False and self.eof == True:        
-            print("EOF FOUND\n\n\n\n")
-            self.openFile.close()"""
         self.openFile.close()    
 
 
@@ -44,10 +39,20 @@ class JackTokenizer():
         currentToken = ""
         strConst = False
         intConst = False
+        comment = False
+        tmp = ""
         
         for letter in inputLine:
-            if "/" in letter:
+            if "/" in letter or "*" in letter:
+                if comment == False:
+                    comment = True
+                    tmp += letter
+                    continue
+                currentToken = ""
+                tmp = ""
+                comment = False
                 break
+                
 
             if strConst and letter != '"':
                 currentToken += letter
@@ -64,9 +69,22 @@ class JackTokenizer():
                 continue
 
             if letter in symbol and currentToken == "":
-                self.tokens.append(letter)
+                if tmp != "":
+                    self.tokens.append(tmp)
+                    tmp = ""
+                if letter == "<":
+                    self.tokens.append("&lt;")
+                elif letter == ">":
+                    self.tokens.append("&gt;")
+                elif letter == "&":
+                    self.tokens.append("&amp;")    
+                else:
+                    self.tokens.append(letter)
                 continue
             elif letter in symbol and currentToken != "":
+                if tmp != "":
+                    self.tokens.append(tmp)
+                    tmp = ""
                 self.tokens.append(currentToken)
                 self.tokens.append(letter)
                 intConst = False
@@ -91,6 +109,9 @@ class JackTokenizer():
                 intConst = False
                 continue
             if letter != " ":
+                if tmp != "":
+                    self.tokens.append(tmp)
+                    tmp = ""
                 currentToken += letter
                 continue
 
@@ -103,6 +124,7 @@ class JackTokenizer():
         if self.i < len(self.tokens):
             return True
         else:
+            self.i = 0
             False
     
     
@@ -116,7 +138,7 @@ class JackTokenizer():
     
     # Returns the type of token from advance()
     def tokenType(self):
-        if self.curToken in symbol:
+        if self.curToken in symbol or self.curToken in ["&lt;","&gt;","&amp;"]:
             return "SYMBOL"
         elif self.curToken in keyword:
             return "KEYWORD"
