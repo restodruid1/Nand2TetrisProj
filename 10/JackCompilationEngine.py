@@ -13,7 +13,7 @@ class JackCompilationEngine():
         if self.i < len(self.inputTokens):
             return True
         else:
-            self.i = 0
+            #self.i = 0
             False  
     
     # If hasMoreTokens is true, this grabs the next token
@@ -111,8 +111,8 @@ class JackCompilationEngine():
             print(f"<symbol> {self.curToken} </symbol>")
             self.advance()
         else:
-            print("<parameterList>")
-            print("</parameterList>")
+            print("<parameterList> </parameterList>")
+            #print("</parameterList>")
             print(f"<symbol> {self.curToken} </symbol>")
             self.advance()
         self.compileSubroutineBody()
@@ -131,8 +131,13 @@ class JackCompilationEngine():
         self.advance()
         print(f"<identifier> {self.curToken} </identifier>")
         self.advance()
-        while self.curToken != ")":
+        while self.curToken == ",":
             print(f"<symbol> {self.curToken} </symbol>")
+            self.advance()
+            if self.curToken in ["int", "char", "boolean"]:
+                print(f"<keyword> {self.curToken} </keyword>")
+            else:
+                print(f"<identifier> {self.curToken} </identifier>")
             self.advance()
             print(f"<identifier> {self.curToken} </identifier>")
             self.advance()
@@ -140,7 +145,7 @@ class JackCompilationEngine():
         print("</parameterList>")
 
     def compileSubroutineBody(self):
-        print("</subroutineBody>")
+        print("<subroutineBody>")
 
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
@@ -148,8 +153,10 @@ class JackCompilationEngine():
             self.compileVarDec()
             self.advance()
         # Statements
-        while self.curToken != "}":
+        if self.curToken != "}":
             self.compileStatements()
+        #while self.curToken != "}":
+            #self.compileStatements()
 
         print(f"<symbol> {self.curToken} </symbol>")
 
@@ -181,23 +188,25 @@ class JackCompilationEngine():
         print("</varDec>")
 
     def compileStatements(self):
-        print("<statements>")
-
-        while self.curToken in ["let","if","while","do","return"]:
-            if self.curToken == "let":
-                self.compileLet()
-            elif self.curToken == "if":
-                self.compileIf()
-            elif self.curToken == "while":
-                self.compileWhile()
-            elif self.curToken == "do":
-                self.compileDo()
-            elif self.curToken == "return":
-                self.compileReturn()
-
+        if self.curToken not in ["let","if","while","do","return"]:
+            print("<statements> </statements>")
+        else:
+            print("<statements>")
+            while self.curToken in ["let","if","while","do","return"]:
+                if self.curToken == "let":
+                    self.compileLet()
+                elif self.curToken == "if":
+                    self.compileIf()
+                elif self.curToken == "while":
+                    self.compileWhile()
+                elif self.curToken == "do":
+                    self.compileDo()
+                elif self.curToken == "return":
+                    self.compileReturn()
+            print("</statements>")
             
-        
-        print("</statements>")
+            #self.advance()
+            
 
     def compileLet(self): 
         print("<letStatement>")
@@ -207,11 +216,15 @@ class JackCompilationEngine():
         print(f"<identifier> {self.curToken} </identifier>")
         self.advance()
         if self.curToken == "[":
-            self.compilEexpression()
+            print(f"<symbol> {self.curToken} </symbol>")
+            self.advance()
+            self.compileExpression()
+            print(f"<symbol> {self.curToken} </symbol>")
+            self.advance()
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
         self.compileExpression()
-        self.advance()
+        #self.advance()
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
 
@@ -225,22 +238,25 @@ class JackCompilationEngine():
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
         self.compileExpression()
-        self.advance()
+        #self.advance()
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
         self.compileStatements()
-        self.advance()
+        #self.advance()
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
+        #print(f"<symbol> {self.curToken} </symbol>")
+        #self.advance()
         if self.curToken == "else":
+            
             print(f"<keyword> {self.curToken} </keyword>")
             self.advance()
             print(f"<symbol> {self.curToken} </symbol>")
             self.advance()
             self.compileStatements()
-            self.advance()
+            #self.advance()
             print(f"<symbol> {self.curToken} </symbol>")
             self.advance()
 
@@ -254,13 +270,13 @@ class JackCompilationEngine():
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
         self.compileExpression()
-        self.advance()
+        #self.advance()
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
         self.compileStatements()
-        self.advance()
+        #self.advance()
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
 
@@ -271,13 +287,41 @@ class JackCompilationEngine():
 
         print(f"<keyword> {self.curToken} </keyword>")
         self.advance()
-        while self.curToken != ";":
-            #subroutineCall
-            pass
+        if self.curToken != ";":
+            # SubroutineCall
+            #print(self.curToken, self.inputTokens[self.i],self.inputTokens[self.i+1])
+            if self.inputTokens[self.i] in ["(","."]:
+                #print("<subroutineCall>")
+                if self.inputTokens[self.i] == "(":
+                    print(f"<identifier> {self.curToken} </identifier>")
+                    self.advance()
+                    print(f"<symbol> {self.curToken} </symbol>")
+                    self.advance()
+                    if self.curToken != ")":
+                        self.compileExpressionList()
+                        #self.advance()
+                    print(f"<symbol> {self.curToken} </symbol>")
+                    self.advance()
+                elif self.inputTokens[self.i] == ".":                       
+                    print(f"<identifier> {self.curToken} </identifier>")
+                    self.advance()
+                    print(f"<symbol> {self.curToken} </symbol>")
+                    self.advance()
+                    print(f"<identifier> {self.curToken} </identifier>")
+                    self.advance()
+                    print(f"<symbol> {self.curToken} </symbol>")
+                    self.advance()
+                    if self.curToken != ")":
+                        self.compileExpressionList()
+                        #self.advance()
+                    print(f"<symbol> {self.curToken} </symbol>")
+                    self.advance()
+
+                #print("</subroutineCall>")
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
 
-        print("<doStatement>")
+        print("</doStatement>")
 
     def compileReturn(self):
         print("<returnStatement>")
@@ -286,17 +330,115 @@ class JackCompilationEngine():
         self.advance()
         if self.curToken != ";":
             self.compileExpression()
-            self.advance()
+            #self.advance()
         print(f"<symbol> {self.curToken} </symbol>")
         self.advance()
 
         print("</returnStatement>")
 
+    
     def compileExpression(self):
-        pass
+        print("<expression>")
+        self.compileTerm()
+        while self.curToken in ['+','-','*','/','&','|','<','>','=']:    
+            print("<op>")
+            print(f"<symbol> {self.curToken} </symbol>")
+            self.advance()
+            self.compileTerm()	
+            print("</op>")
+
+        print("</expression>")
 
     def compileTerm(self):
-        pass
+        print("<term>")
+        if self.curToken in ['true','false','null','this']:
+            # keywordConstant
+            #print("<keywordConstant>")
+            print(f"<keyword> {self.curToken} </keyword>")
+            #print("<keywordConstant>")
+            self.advance()
+        elif self.curToken in ['-','~']:
+            # UnaryOp term
+            print("<unaryOp>")
+            print(f"<keyword> {self.curToken} </keyword>")
+            self.advance()
+            self.compileTerm()
+            print("</unaryOp>")
+            self.advance()
+        elif self.curToken == '"':
+            # StringConstant
+            print(f"<stringConstant> {self.curToken} </stringConstant>")
+            self.advance()
+        elif self.curToken.isdigit():
+            # IntegerConstant
+            print(f"<integerConstant> {self.curToken} <integerConstant>")
+            self.advance()
+        elif self.curToken == "(":
+            # (expression)
+            print(f"<symbol> {self.curToken} </symbol>")
+            self.advance()
+            while self.curToken != ")":
+                self.compileExpression()
+                #self.advance()
+        elif self.inputTokens[self.i] == "[":
+            # varName[expression]
+            print(f"<identifier> {self.curToken} </identifier>")
+            self.advance()
+            print(f"<symbol> {self.curToken} </symbol>")
+            self.advance()
+            while self.curToken != "]":
+                self.compileExpression()
+                #self.advance()
+            print(f"<symbol> {self.curToken} </symbol>")
+            self.advance()
+        elif self.inputTokens[self.i] in ["(","."]:
+            # subroutineCall
+            print("<subroutineCall>")
+            if self.inputTokens[self.i] == "(":
+                print(f"<identifier> {self.curToken} </identifier>")
+                self.advance()
+                print(f"<symbol> {self.curToken} </symbol>")
+                self.advance()
+                if self.curToken != ")":
+                    self.compileExpressionList()
+                    #self.advance()
+                print(f"<symbol> {self.curToken} </symbol>")
+                self.advance()
+            elif self.inputTokens[self.i] == ".":
+                    
+                    
+                print(f"<identifier> {self.curToken} </identifier>")
+                self.advance()
+                print(f"<symbol> {self.curToken} </symbol>")
+                self.advance()
+                print(f"<identifier> {self.curToken} </identifier>")
+                self.advance()
+                print(f"<symbol> {self.curToken} </symbol>")
+                self.advance()
+                if self.curToken != ")":
+                    self.compileExpressionList()
+                    #self.advance()
+                print(f"<symbol> {self.curToken} </symbol>")
+                self.advance()
+
+            print("</subroutineCall>")
+
+        else:
+            # varName
+            print(f"<identifier> {self.curToken} </identifier>")
+            self.advance()
+        print("</term>")
+
 
     def compileExpressionList(self):
-        pass
+        print("<expressionList>")
+        if self.curToken != ")":
+            self.compileExpression()
+            #self.advance()
+            while self.curToken != ")":
+                if self.curToken == ",":
+                    print(f"<symbol> {self.curToken} </symbol>")
+                    self.advance()
+                    self.compileExpression()
+                    #self.advance()
+        print("</expressionList>")
