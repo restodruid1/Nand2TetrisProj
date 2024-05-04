@@ -6,7 +6,7 @@ class JackCompilationEngine():
     def __init__(self, outPutFile):
         self.outPutFile = outPutFile
         self.inputTokens = []
-
+        self.outFile = open(outPutFile, 'w')
 
         # Return True if there are more tokens left
     def hasMoreTokens(self):
@@ -19,135 +19,121 @@ class JackCompilationEngine():
     # If hasMoreTokens is true, this grabs the next token
     def advance(self):
         self.curToken = self.inputTokens[self.i]
-        #print(self.curToken, self.i)
         self.i += 1
 
 
     def compileClass(self):
         # 'class' className '{' classVarDec* subroutineDec* '}'
         self.advance()
-        print("<class>")
-
+        self.outFile.write("<class>\n")
+        #print(self.inputTokens)
         if self.curToken == "class":
-            print(f"<keyword> {self.curToken} </keyword>")
+            self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
-        print(f"<identifier> {self.curToken} </identifier>")
+        self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         
         self.advance()
         # classVarDec*
         while self.curToken in ["static", "field"]:
-            #print("<classVarDec>")
             self.compileClassVarDec()
             self.advance()
-            #loop = True   
-            #while (loop != False):
-                #loop = self.compileClassVarDec()
         
         #subroutineDec*
         while self.curToken in ['constructor','function','method']:
-            #print("<subroutineDec>")
             self.compileSubroutine()
             self.advance()
 
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
 
-        print("</class>")
-        #loop2 = self.compileSubroutine()
+        self.outFile.write("</class>\n")
+    
 
 
     def compileClassVarDec(self):
         # classVarDec : ('static' | 'field) type varName (',' varName)* ';'
-        #self.advance()
-        #if self.curToken in ["static", "field"]:
-        print("<classVarDec>")
+        self.outFile.write("<classVarDec>\n")
 
-        print(f"<keyword> {self.curToken} </keyword>")
+        self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
         if self.curToken in ["int", "char", "boolean"]:
-            print(f"<keyword> {self.curToken} </keyword>")
+            self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         else:
-            print(f"<identifier> {self.curToken} </identifier>")
+            self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
-        print(f"<identifier> {self.curToken} </identifier>")
+        self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
         while self.curToken != ";":
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
-            print(f"<identifier> {self.curToken} </identifier>")
+            self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
             self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
 
-        print("</classVarDec>")
-        #else:
-            #return False
+        self.outFile.write("</classVarDec>\n")
         
 
 
     def compileSubroutine(self):
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
-        #self.advance()
-        #if self.token in ['constructor','function','method']:
-        print("<subroutineDec>")
+        self.outFile.write("<subroutineDec>\n")
 
-        print(f"<keyword> {self.curToken} </keyword>")
+        self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
         if self.curToken == "void":
-            print(f"<keyword> {self.curToken} </keyword>")
+            self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         else:
             if self.curToken in ["int", "char", "boolean"]:
-                print(f"<keyword> {self.curToken} </keyword>")
+                self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
             else:
-                print(f"<identifier> {self.curToken} </identifier>")
+                self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
-        print(f"<identifier> {self.curToken} </identifier>")
+        self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         if self.curToken != ")":
             while self.curToken != ")":
                 self.compileParameterList()
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
         else:
-            print("<parameterList> </parameterList>")
-            #print("</parameterList>")
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write("<parameterList>\n </parameterList>\n")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
         self.compileSubroutineBody()
 
-        print("</subroutineDec>")
-        #else:
-            #return False
+        self.outFile.write("</subroutineDec>\n")
+
 
     def compileParameterList(self):
-        print("<parameterList>")
+        self.outFile.write("<parameterList>\n")
 
         if self.curToken in ["int", "char", "boolean"]:
-            print(f"<keyword> {self.curToken} </keyword>")
+            self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         else:
-            print(f"<identifier> {self.curToken} </identifier>")
+            self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
-        print(f"<identifier> {self.curToken} </identifier>")
+        self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
         while self.curToken == ",":
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
             if self.curToken in ["int", "char", "boolean"]:
-                print(f"<keyword> {self.curToken} </keyword>")
+                self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
             else:
-                print(f"<identifier> {self.curToken} </identifier>")
+                self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
             self.advance()
-            print(f"<identifier> {self.curToken} </identifier>")
+            self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
             self.advance()
 
-        print("</parameterList>")
+        self.outFile.write("</parameterList>\n")
 
     def compileSubroutineBody(self):
-        print("<subroutineBody>")
+        self.outFile.write("<subroutineBody>\n")
 
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         while self.curToken == "var":
             self.compileVarDec()
@@ -155,43 +141,39 @@ class JackCompilationEngine():
         # Statements
         if self.curToken != "}":
             self.compileStatements()
-        #while self.curToken != "}":
-            #self.compileStatements()
 
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
 
-
-        print("</subroutineBody>")
+        self.outFile.write("</subroutineBody>\n")
 
 
     def compileVarDec(self):
-        print("<varDec>")
+        self.outFile.write("<varDec>\n")
 
-        print(f"<keyword> {self.curToken} </keyword>")
+        self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
         if self.curToken in ["int", "char", "boolean"]:
-            print(f"<keyword> {self.curToken} </keyword>")
+            self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         else:
-            print(f"<identifier> {self.curToken} </identifier>")
+            self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
-        print(f"<identifier> {self.curToken} </identifier>")
-        #self.advance()
-        #print(f"<identifier> {self.curToken} </identifier>")
+        self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
         while self.curToken != ";":
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
-            print(f"<identifier> {self.curToken} </identifier>")
+            self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
             self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
 
-        print("</varDec>")
+        self.outFile.write("</varDec>\n")
+
 
     def compileStatements(self):
         if self.curToken not in ["let","if","while","do","return"]:
-            print("<statements> </statements>")
+            self.outFile.write("<statements>\n </statements>\n")
         else:
-            print("<statements>")
+            self.outFile.write("<statements>\n")
             while self.curToken in ["let","if","while","do","return"]:
                 if self.curToken == "let":
                     self.compileLet()
@@ -203,242 +185,240 @@ class JackCompilationEngine():
                     self.compileDo()
                 elif self.curToken == "return":
                     self.compileReturn()
-            print("</statements>")
+            self.outFile.write("</statements>\n")
             
-            #self.advance()
             
 
     def compileLet(self): 
-        print("<letStatement>")
+        self.outFile.write("<letStatement>\n")
 
-        print(f"<keyword> {self.curToken} </keyword>")
+        self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
-        print(f"<identifier> {self.curToken} </identifier>")
+        self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
         if self.curToken == "[":
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
             self.compileExpression()
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         self.compileExpression()
-        #self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
 
-        print("</letStatement>")
+        self.outFile.write("</letStatement>\n")
 
     def compileIf(self):
-        print("<ifStatement>")
+        self.outFile.write("<ifStatement>\n")
         
-        print(f"<keyword> {self.curToken} </keyword>")
+        self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         self.compileExpression()
-        #self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         self.compileStatements()
-        #self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
-        #print(f"<symbol> {self.curToken} </symbol>")
-        #self.advance()
         if self.curToken == "else":
             
-            print(f"<keyword> {self.curToken} </keyword>")
+            self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
             self.advance()
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
             self.compileStatements()
-            #self.advance()
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
 
-        print("</ifStatement>")
+        self.outFile.write("</ifStatement>\n")
 
     def compileWhile(self):
-        print("<whileStatement>")
+        self.outFile.write("<whileStatement>\n")
 
-        print(f"<keyword> {self.curToken} </keyword>")
+        self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         self.compileExpression()
-        #self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         self.compileStatements()
-        #self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
 
-        print("</whileStatement>")
+        self.outFile.write("</whileStatement>\n")
 
     def compileDo(self):
-        print("<doStatement>")
+        self.outFile.write("<doStatement>\n")
 
-        print(f"<keyword> {self.curToken} </keyword>")
+        self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
         if self.curToken != ";":
             # SubroutineCall
-            #print(self.curToken, self.inputTokens[self.i],self.inputTokens[self.i+1])
             if self.inputTokens[self.i] in ["(","."]:
-                #print("<subroutineCall>")
+
                 if self.inputTokens[self.i] == "(":
-                    print(f"<identifier> {self.curToken} </identifier>")
+                    self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
                     self.advance()
-                    print(f"<symbol> {self.curToken} </symbol>")
+                    self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                     self.advance()
-                    if self.curToken != ")":
-                        self.compileExpressionList()
+                    #if self.curToken != ")":
+                    self.compileExpressionList()
                         #self.advance()
-                    print(f"<symbol> {self.curToken} </symbol>")
-                    self.advance()
-                elif self.inputTokens[self.i] == ".":                       
-                    print(f"<identifier> {self.curToken} </identifier>")
-                    self.advance()
-                    print(f"<symbol> {self.curToken} </symbol>")
-                    self.advance()
-                    print(f"<identifier> {self.curToken} </identifier>")
-                    self.advance()
-                    print(f"<symbol> {self.curToken} </symbol>")
-                    self.advance()
-                    if self.curToken != ")":
-                        self.compileExpressionList()
-                        #self.advance()
-                    print(f"<symbol> {self.curToken} </symbol>")
+                    self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                     self.advance()
 
-                #print("</subroutineCall>")
-        print(f"<symbol> {self.curToken} </symbol>")
+                elif self.inputTokens[self.i] == ".":                       
+                    self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
+                    self.advance()
+                    self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+                    self.advance()
+                    self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
+                    self.advance()
+                    self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+                    self.advance()
+                    #if self.curToken != ")":
+                    self.compileExpressionList()
+                        #self.advance()
+                    self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+                    self.advance()
+
+                
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
 
-        print("</doStatement>")
+        self.outFile.write("</doStatement>\n")
 
     def compileReturn(self):
-        print("<returnStatement>")
+        self.outFile.write("<returnStatement>\n")
 
-        print(f"<keyword> {self.curToken} </keyword>")
+        self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
         if self.curToken != ";":
             self.compileExpression()
-            #self.advance()
-        print(f"<symbol> {self.curToken} </symbol>")
+        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
 
-        print("</returnStatement>")
+        self.outFile.write("</returnStatement>\n")
 
     
     def compileExpression(self):
-        print("<expression>")
+        self.outFile.write("<expression>\n")
         self.compileTerm()
-        while self.curToken in ['+','-','*','/','&','|','<','>','=']:    
-            print("<op>")
-            print(f"<symbol> {self.curToken} </symbol>")
+
+        while self.curToken in ['+','-','*','/','&','|','<','>','=','&lt;','&gt;','&amp;']:    
+            if self.curToken in ['<', '&lt;']:
+                self.outFile.write("<symbol> &lt; </symbol>\n")
+            elif self.curToken in ['>','&gt;']:
+                self.outFile.write("<symbol> &gt; </symbol>\n")
+            elif self.curToken in ['&','&amp;']:
+                self.outFile.write("<symbol> &amp; </symbol>\n")
+            else:
+                self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
             self.compileTerm()	
-            print("</op>")
 
-        print("</expression>")
+        self.outFile.write("</expression>\n")
 
     def compileTerm(self):
-        print("<term>")
+        self.outFile.write("<term>\n")
         if self.curToken in ['true','false','null','this']:
             # keywordConstant
-            #print("<keywordConstant>")
-            print(f"<keyword> {self.curToken} </keyword>")
-            #print("<keywordConstant>")
+            self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
             self.advance()
+
         elif self.curToken in ['-','~']:
             # UnaryOp term
-            print("<unaryOp>")
-            print(f"<keyword> {self.curToken} </keyword>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
             self.compileTerm()
-            print("</unaryOp>")
-            self.advance()
-        elif self.curToken == '"':
+    
+        elif self.curToken[0] == '"':
             # StringConstant
-            print(f"<stringConstant> {self.curToken} </stringConstant>")
+            self.outFile.write(f"<stringConstant> {self.curToken[1:-1]} </stringConstant>\n")
             self.advance()
+
         elif self.curToken.isdigit():
             # IntegerConstant
-            print(f"<integerConstant> {self.curToken} <integerConstant>")
+            self.outFile.write(f"<integerConstant> {self.curToken} </integerConstant>\n")
             self.advance()
+
         elif self.curToken == "(":
             # (expression)
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
-            while self.curToken != ")":
+            if self.curToken != ")":
+            #while self.curToken != ")":
                 self.compileExpression()
                 #self.advance()
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+            self.advance()
+
         elif self.inputTokens[self.i] == "[":
             # varName[expression]
-            print(f"<identifier> {self.curToken} </identifier>")
+            self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
             self.advance()
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
-            while self.curToken != "]":
+            if self.curToken != "]":
                 self.compileExpression()
                 #self.advance()
-            print(f"<symbol> {self.curToken} </symbol>")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
+
         elif self.inputTokens[self.i] in ["(","."]:
             # subroutineCall
-            print("<subroutineCall>")
             if self.inputTokens[self.i] == "(":
-                print(f"<identifier> {self.curToken} </identifier>")
+                self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
                 self.advance()
-                print(f"<symbol> {self.curToken} </symbol>")
+                self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                 self.advance()
-                if self.curToken != ")":
-                    self.compileExpressionList()
+                #if self.curToken != ")":
+                self.compileExpressionList()
                     #self.advance()
-                print(f"<symbol> {self.curToken} </symbol>")
-                self.advance()
-            elif self.inputTokens[self.i] == ".":
-                    
-                    
-                print(f"<identifier> {self.curToken} </identifier>")
-                self.advance()
-                print(f"<symbol> {self.curToken} </symbol>")
-                self.advance()
-                print(f"<identifier> {self.curToken} </identifier>")
-                self.advance()
-                print(f"<symbol> {self.curToken} </symbol>")
-                self.advance()
-                if self.curToken != ")":
-                    self.compileExpressionList()
-                    #self.advance()
-                print(f"<symbol> {self.curToken} </symbol>")
+                self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                 self.advance()
 
-            print("</subroutineCall>")
+            elif self.inputTokens[self.i] == ".":
+                                     
+                self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
+                self.advance()
+                self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+                self.advance()
+                self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
+                self.advance()
+                self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+                self.advance()
+                #if self.curToken != ")":
+                self.compileExpressionList()
+                    #self.advance()
+                self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+                self.advance()
 
         else:
             # varName
-            print(f"<identifier> {self.curToken} </identifier>")
+            self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
             self.advance()
-        print("</term>")
+
+        self.outFile.write("</term>\n")
 
 
     def compileExpressionList(self):
-        print("<expressionList>")
         if self.curToken != ")":
+            self.outFile.write("<expressionList>\n")
             self.compileExpression()
-            #self.advance()
             while self.curToken != ")":
                 if self.curToken == ",":
-                    print(f"<symbol> {self.curToken} </symbol>")
+                    self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                     self.advance()
                     self.compileExpression()
-                    #self.advance()
-        print("</expressionList>")
+            self.outFile.write("</expressionList>\n")
+        else:
+            self.outFile.write("<expressionList>\n </expressionList>\n")

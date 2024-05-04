@@ -6,7 +6,7 @@ class JackAnalyzer():
     
     def analyze(self, root1):
         tokenizer = JackTokenizer.JackTokenizer(root1)
-        compilationEngine = JackCompilationEngine.JackCompilationEngine()
+        compilationEngine = JackCompilationEngine.JackCompilationEngine(compEngOutFile)
         openFile = open(outFile, 'w')
         
         openFile.write("<tokens>\n")       
@@ -32,17 +32,14 @@ class JackAnalyzer():
         openFile.write("</tokens>") 
         #print(tokenizer.tokens)
 
-        # Tokenized Input for Compilation Engine
-        while tokenizer.hasMoreTokens():
-            compilationEngine.compileClass()
-        
-
-
+        compilationEngine.compileClass()
+               
 
 root = sys.argv[1]
 print(root)
 outDirectory = ""
 outFile = ""
+compEngOutFile = ""
 
 if os.path.isdir(root):
     tmpDirectory = []
@@ -63,6 +60,8 @@ if os.path.isdir(root):
         filePath = os.path.join(root, file)
         fileT = file.replace(".JACK", "T")
         outFile = outDirectory + "\\" + (fileT + ".xml")
+        compEngOutFile = outDirectory + "\\" + file.replace(".JACK","") + ".xml"
+        print(compEngOutFile)
         print(outFile)
         #print(file)
         #print(filePath)
@@ -72,5 +71,5 @@ if os.path.isdir(root):
 else:
     #analyzer = JackAnalyzer()
     #analyzer.analyze(root)
-    print("SUBMIT DIRECTORY NOT FILE")
+    print("SUBMIT DIRECTORY, NOT FILE")
     print("EOF FOUND")
