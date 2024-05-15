@@ -11,6 +11,7 @@ class JackCompilationEngine():
     funcName = ""
     #funcType = ""
     funcVari = 0
+    uniqueLabel = 0
 
     def __init__(self, outPutFile):
         self.outPutFile = outPutFile
@@ -23,6 +24,7 @@ class JackCompilationEngine():
         self.funcName = ""
         #self.funcType = ""
         self.funcVari = 0
+        self.uniqueLabel = 0
 
         # Return True if there are more tokens left
     def hasMoreTokens(self):
@@ -64,7 +66,7 @@ class JackCompilationEngine():
         while self.curToken in ['constructor','function','method']:
             self.compileSubroutine()
             self.advance()
-            self.VmWriter.writeReturn()
+            #self.VmWriter.writeReturn()
         #print(self.symbTbl.printSubrDict())
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
 
@@ -278,21 +280,26 @@ class JackCompilationEngine():
 
     def compileIf(self):
         self.outFile.write("<ifStatement>\n")
-        
+        l1 = f"if{self.uniqueLabel}"
+        l2 = f"el{self.uniqueLabel}"
+        self.uniqueLabel += 1
         self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         self.compileExpression()
+        self.VmWriter.outFile.write("not\n")
+        self.VmWriter.writeIf(l2)
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         self.compileStatements()
+        self.VmWriter.writeGoto(l1)
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         if self.curToken == "else":
-            
+            self.VmWriter.writeLabel(l2)
             self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
             self.advance()
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
@@ -300,25 +307,34 @@ class JackCompilationEngine():
             self.compileStatements()
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
-
+            self.VmWriter.writeLabel(l1)
+        
         self.outFile.write("</ifStatement>\n")
 
     def compileWhile(self):
+        l1 = f"do{self.uniqueLabel}"
+        l2 = f"wh{self.uniqueLabel}"
+        self.uniqueLabel += 1
         self.outFile.write("<whileStatement>\n")
-
+        self.VmWriter.writeLabel(l1)
         self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         self.compileExpression()
+        self.VmWriter.outFile.write("not\n")
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+        self.VmWriter.writeIf(l2)
         self.advance()
         self.compileStatements()
+        self.VmWriter.writeGoto(l1)
+        self.VmWriter.writeLabel(l2)
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
-
+        
+        
         self.outFile.write("</whileStatement>\n")
 
     def compileDo(self):
@@ -371,11 +387,14 @@ class JackCompilationEngine():
 
         self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
+        
         if self.curToken != ";":
             self.compileExpression()
+            self.VmWriter.outFile.write("return\n")
+        else:
+            self.VmWriter.writeReturn()
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
         self.advance()
-
         self.outFile.write("</returnStatement>\n")
 
     
@@ -427,10 +446,12 @@ class JackCompilationEngine():
             print(self.curToken)
             if self.curToken == "-" and self.inputTokens[self.i].isdigit():
                 self.isNeg = True
-
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+            tildeTmp = self.curToken
             self.advance()
             self.compileTerm()
+            if tildeTmp == "~":
+                self.VmWriter.writeArithmetic("~")
     
         elif self.curToken[0] == '"':
             # StringConstant
@@ -484,6 +505,8 @@ class JackCompilationEngine():
                 #if self.curToken != ")":
                 self.compileExpressionList()
                     #self.advance()
+                self.VmWriter.writeCall(func, self.args)
+                self.args = 0
                 self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                 self.advance()
 
