@@ -9,7 +9,9 @@ class JackCompilationEngine():
     args = 0
     isNeg = False
     funcName = ""
-    #funcType = ""
+    funcType = ""
+    funcKind = ""
+    className = ""
     funcVari = 0
     uniqueLabel = 0
 
@@ -22,9 +24,11 @@ class JackCompilationEngine():
         self.args = 0 
         self.isNeg = False
         self.funcName = ""
-        #self.funcType = ""
+        self.funcType = ""
         self.funcVari = 0
         self.uniqueLabel = 0
+        self.funcKind = ""
+        self.className = ""
 
         # Return True if there are more tokens left
     def hasMoreTokens(self):
@@ -50,6 +54,7 @@ class JackCompilationEngine():
             self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
         self.symbTbl.className = self.curToken
+        self.className = self.curToken
         self.VmWriter.className = self.curToken
         self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
@@ -108,10 +113,12 @@ class JackCompilationEngine():
     def compileSubroutine(self):
         # ('constructor' | 'function' | 'method') ('void' | type) subroutineName '(' parameterList ')' subroutineBody
         keyword = self.curToken
+        self.funcKind = self.curToken
         self.outFile.write("<subroutineDec>\n")
         self.symbTbl.startSubroutine()
         self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
+        
         
         if self.curToken == "void":
             self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
@@ -148,6 +155,7 @@ class JackCompilationEngine():
     def compileParameterList(self):
         type1 = ""
         keyword = self.inputTokens[self.i - 5]
+        self.funcType = keyword
         print(self.inputTokens[self.i - 4])
         print(keyword + "!!!!!!!")
         self.outFile.write("<parameterList>\n")
@@ -191,7 +199,17 @@ class JackCompilationEngine():
         while self.curToken == "var":
             self.compileVarDec()
             self.advance()
+        
         self.VmWriter.writeFunction(self.funcName, self.funcVari)
+        if self.funcKind == "method":           
+            self.VmWriter.writePush("argument", 0)
+            self.VmWriter.writePop("pointer", 0)
+        else:
+            if self.funcKind == "constructor":
+                self.VmWriter.writePush("constant", self.symbTbl.varCount("this"))
+                self.VmWriter.writeCall("Memory.alloc", 1)
+                self.VmWriter.writePop("pointer", 0)
+
         self.funcVari = 0
         # Statements
         if self.curToken != "}":
@@ -263,18 +281,46 @@ class JackCompilationEngine():
             #self.VmWriter.writePush(self.symbTbl.classSymTable[self.curToken][0],self.symbTbl.classSymTable[self.curToken][3])
         self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
-        if self.curToken == "[":
+        if self.curToken == "[":   
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+            self.advance()
+            self.VmWriter.writePush(self.symbTbl.kindOf(self.inputTokens[self.i - 3]), self.symbTbl.indexOf(self.inputTokens[self.i - 3]))
+            self.compileExpression()
+            self.VmWriter.writeArithmetic("+")
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+            self.advance()
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+            self.advance()
+            tmp = self.inputTokens[self.i]
+            print(tmp)
+            print(tmp + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            if tmp != "[":
+                self.VmWriter.writePop("pointer", 1)
+                #self.VmWriter.writePop("temp", 0)
+                self.compileExpression()
+                #self.VmWriter.writePush("temp", 0)
+                #self.VmWriter.writePop("pointer", 1)
+                self.VmWriter.writePop("that", 0)
+            else:
+                self.compileExpression()
+            """if tmp != "[":
+                self.VmWriter.writePop("temp", 0)
+                self.VmWriter.writePop("pointer", 1)
+                self.VmWriter.writePush("temp", 0)
+                self.VmWriter.writePop("that", 0)"""
+            
+
+            #self.VmWriter.writePop(var[0], var[1])
+            #self.VmWriter.writePop("temp", 0)
+            self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
+            self.advance()
+        else:
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
             self.compileExpression()
+            self.VmWriter.writePop(var[0], var[1])
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
-        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
-        self.advance()
-        self.compileExpression()
-        self.VmWriter.writePop(var[0], var[1])
-        self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
-        self.advance()
 
         self.outFile.write("</letStatement>\n")
 
@@ -308,6 +354,10 @@ class JackCompilationEngine():
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
             self.VmWriter.writeLabel(l1)
+        else:
+            self.VmWriter.writeLabel(l2)
+            self.VmWriter.writeLabel(l1)
+
         
         self.outFile.write("</ifStatement>\n")
 
@@ -342,6 +392,8 @@ class JackCompilationEngine():
         func = ""
         self.outFile.write(f"<keyword> {self.curToken} </keyword>\n")
         self.advance()
+        
+        #print(className + "TJosc;lssanmme" + methodName)
         if self.curToken != ";":
             # SubroutineCall
             if self.inputTokens[self.i] in ["(","."]:
@@ -357,8 +409,12 @@ class JackCompilationEngine():
                         #self.advance()
                     self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                     self.advance()
+                    self.VmWriter.writePush("pointer", 0)
+                    self.VmWriter.writeCall(self.className + "." + func, self.args + 1)
 
                 elif self.inputTokens[self.i] == ".":                       
+                    methodName = self.inputTokens[self.i] + self.inputTokens[self.i + 1]
+                    className = self.curToken
                     self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
                     self.advance()
                     self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
@@ -373,8 +429,16 @@ class JackCompilationEngine():
                         #self.advance()
                     self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                     self.advance()
-
-        self.VmWriter.writeCall(func, self.args)
+                    if className in self.symbTbl.subrSymTable:
+                        self.VmWriter.writePush(self.symbTbl.kindOf(className), self.symbTbl.indexOf(className))
+                        self.VmWriter.writeCall(self.symbTbl.typeOf(className) + methodName, self.args + 1)
+                    elif className in self.symbTbl.classSymTable:
+                        self.VmWriter.writePush(self.symbTbl.kindOf(className), self.symbTbl.indexOf(className))
+                        self.VmWriter.writeCall(self.symbTbl.typeOf(className) + methodName, self.args + 1)
+                    else:
+                        print("yoooooooaaaaaaaaaaaaaaaaaaaaaa")    
+                        self.VmWriter.writeCall(func, self.args)
+        #self.VmWriter.writeCall(func, self.args)
         self.VmWriter.writePop("temp", "0")
         self.args = 0        
         self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
@@ -455,6 +519,11 @@ class JackCompilationEngine():
     
         elif self.curToken[0] == '"':
             # StringConstant
+            self.VmWriter.writePush("constant", len(self.curToken[1:-1]))
+            self.VmWriter.writeCall("String.new", 1)
+            for char in self.curToken[1:-1]:
+                self.VmWriter.writePush("constant", ord(char))
+                self.VmWriter.writeCall("String.appendChar", 2)
             self.outFile.write(f"<stringConstant> {self.curToken[1:-1]} </stringConstant>\n")
             self.advance()
 
@@ -485,12 +554,28 @@ class JackCompilationEngine():
 
         elif self.inputTokens[self.i] == "[":
             # varName[expression]
+            tmp = self.inputTokens[self.i - 3]
             self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
             self.advance()
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
             if self.curToken != "]":
-                self.compileExpression()
+                if tmp == "]":
+                    self.VmWriter.writePush(self.symbTbl.kindOf(self.inputTokens[self.i - 3]), self.symbTbl.indexOf(self.inputTokens[self.i - 3]))
+                    self.compileExpression()
+                    self.VmWriter.writeArithmetic("+")
+                    self.VmWriter.writePop("pointer", 1)
+                    self.VmWriter.writePush("that", 0)
+                    self.VmWriter.writePop("temp", 0)
+                    self.VmWriter.writePop("pointer", 1)
+                    self.VmWriter.writePush("temp", 0)
+                    self.VmWriter.writePop("that", 0)
+                else:
+                    self.VmWriter.writePush(self.symbTbl.kindOf(self.inputTokens[self.i - 3]), self.symbTbl.indexOf(self.inputTokens[self.i - 3]))
+                    self.compileExpression()
+                    self.VmWriter.writeArithmetic("+")
+                    self.VmWriter.writePop("pointer", 1)
+                    self.VmWriter.writePush("that", 0)
                 #self.advance()
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
@@ -511,7 +596,10 @@ class JackCompilationEngine():
                 self.advance()
 
             elif self.inputTokens[self.i] == ".":
-                func = self.curToken + self.inputTokens[self.i] + self.inputTokens[self.i + 1]                    
+                func = self.curToken + self.inputTokens[self.i] + self.inputTokens[self.i + 1]
+                methodName = self.inputTokens[self.i] + self.inputTokens[self.i + 1]
+                className = self.curToken    
+                print(methodName, className)                
                 self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
                 self.advance()
                 self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
@@ -523,7 +611,13 @@ class JackCompilationEngine():
                 #if self.curToken != ")":
                 self.compileExpressionList()
                     #self.advance()
-                self.VmWriter.writeCall(func, self.args)
+                print(self.symbTbl.typeOf(className))
+                if self.symbTbl.typeOf(className):
+                    print("yoooooooooooooooooooooooooooooooooooooooooooo")
+                    self.VmWriter.writeCall(self.symbTbl.typeOf(className) + methodName, self.args + 1)
+                else:
+                    print("yoooooooaaaaaaaaaaaaaaaaaaaaaa")    
+                    self.VmWriter.writeCall(func, self.args)
                 self.args = 0
                 self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                 self.advance()
