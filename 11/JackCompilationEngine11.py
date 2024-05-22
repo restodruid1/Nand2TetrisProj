@@ -405,11 +405,12 @@ class JackCompilationEngine():
                     self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                     self.advance()
                     #if self.curToken != ")":
+                    self.VmWriter.writePush("pointer", 0)
                     self.compileExpressionList()
                         #self.advance()
                     self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                     self.advance()
-                    self.VmWriter.writePush("pointer", 0)
+                    #self.VmWriter.writePush("pointer", 0)
                     self.VmWriter.writeCall(self.className + "." + func, self.args + 1)
 
                 elif self.inputTokens[self.i] == ".":                       
@@ -425,6 +426,8 @@ class JackCompilationEngine():
                     self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
                     self.advance()
                     #if self.curToken != ")":
+                    if className in self.symbTbl.classSymTable:
+                        self.VmWriter.writePush(self.symbTbl.kindOf(className), self.symbTbl.indexOf(className))
                     self.compileExpressionList()
                         #self.advance()
                     self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
@@ -433,7 +436,7 @@ class JackCompilationEngine():
                         self.VmWriter.writePush(self.symbTbl.kindOf(className), self.symbTbl.indexOf(className))
                         self.VmWriter.writeCall(self.symbTbl.typeOf(className) + methodName, self.args + 1)
                     elif className in self.symbTbl.classSymTable:
-                        self.VmWriter.writePush(self.symbTbl.kindOf(className), self.symbTbl.indexOf(className))
+                        #self.VmWriter.writePush(self.symbTbl.kindOf(className), self.symbTbl.indexOf(className))
                         self.VmWriter.writeCall(self.symbTbl.typeOf(className) + methodName, self.args + 1)
                     else:
                         print("yoooooooaaaaaaaaaaaaaaaaaaaaaa")    
@@ -613,10 +616,9 @@ class JackCompilationEngine():
                     #self.advance()
                 print(self.symbTbl.typeOf(className))
                 if self.symbTbl.typeOf(className):
-                    print("yoooooooooooooooooooooooooooooooooooooooooooo")
+                    self.VmWriter.writePush(self.symbTbl.kindOf(className), self.symbTbl.indexOf(className))
                     self.VmWriter.writeCall(self.symbTbl.typeOf(className) + methodName, self.args + 1)
-                else:
-                    print("yoooooooaaaaaaaaaaaaaaaaaaaaaa")    
+                else:    
                     self.VmWriter.writeCall(func, self.args)
                 self.args = 0
                 self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
