@@ -274,11 +274,7 @@ class JackCompilationEngine():
         self.advance()
         
         var = self.symbTbl.kindOf(self.curToken), self.symbTbl.indexOf(self.curToken) 
-        #print(self.curToken)
-        #if self.symbTbl.subrSymTable.get(self.curToken):
-            #self.VmWriter.writePush(self.symbTbl.subrSymTable[self.curToken][0],self.symbTbl.subrSymTable[self.curToken][3])
-        #else:
-            #self.VmWriter.writePush(self.symbTbl.classSymTable[self.curToken][0],self.symbTbl.classSymTable[self.curToken][3])
+        
         self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
         self.advance()
         if self.curToken == "[":   
@@ -292,33 +288,31 @@ class JackCompilationEngine():
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
             tmp = self.inputTokens[self.i]
-            print(tmp)
-            print(tmp + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            
             if tmp != "[":
                 self.VmWriter.writePop("pointer", 1)
-                #self.VmWriter.writePop("temp", 0)
                 self.compileExpression()
-                #self.VmWriter.writePush("temp", 0)
-                #self.VmWriter.writePop("pointer", 1)
                 self.VmWriter.writePop("that", 0)
+                
             else:
                 self.compileExpression()
-            """if tmp != "[":
                 self.VmWriter.writePop("temp", 0)
                 self.VmWriter.writePop("pointer", 1)
                 self.VmWriter.writePush("temp", 0)
-                self.VmWriter.writePop("that", 0)"""
+                self.VmWriter.writePop("that", 0)
             
-
-            #self.VmWriter.writePop(var[0], var[1])
-            #self.VmWriter.writePop("temp", 0)
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
         else:
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
             self.compileExpression()
-            self.VmWriter.writePop(var[0], var[1])
+            if self.inputTokens[self.i - 1] == "[":
+                self.VmWriter.writePop("pointer", 1)
+                self.VmWriter.writePush("that", 0)
+                self.VmWriter.writePop(var[0], var[1])
+            else:    
+                self.VmWriter.writePop(var[0], var[1])
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
 
@@ -539,10 +533,8 @@ class JackCompilationEngine():
             else:
                 self.VmWriter.writePush("constant", self.curToken)
             self.isNeg = False
-            #print(self.curToken)
-            #print(self.inputTokens)
             self.advance()
-            #print(self.curToken)
+        
 
         elif self.curToken == "(":
             # (expression)
@@ -562,24 +554,13 @@ class JackCompilationEngine():
             self.advance()
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
-            if self.curToken != "]":
-                if tmp == "]":
-                    self.VmWriter.writePush(self.symbTbl.kindOf(self.inputTokens[self.i - 3]), self.symbTbl.indexOf(self.inputTokens[self.i - 3]))
-                    self.compileExpression()
-                    self.VmWriter.writeArithmetic("+")
-                    self.VmWriter.writePop("pointer", 1)
-                    self.VmWriter.writePush("that", 0)
-                    self.VmWriter.writePop("temp", 0)
-                    self.VmWriter.writePop("pointer", 1)
-                    self.VmWriter.writePush("temp", 0)
-                    self.VmWriter.writePop("that", 0)
-                else:
-                    self.VmWriter.writePush(self.symbTbl.kindOf(self.inputTokens[self.i - 3]), self.symbTbl.indexOf(self.inputTokens[self.i - 3]))
-                    self.compileExpression()
-                    self.VmWriter.writeArithmetic("+")
-                    self.VmWriter.writePop("pointer", 1)
-                    self.VmWriter.writePush("that", 0)
-                #self.advance()
+                          
+            self.VmWriter.writePush(self.symbTbl.kindOf(self.inputTokens[self.i - 3]), self.symbTbl.indexOf(self.inputTokens[self.i - 3]))
+            self.compileExpression()
+            self.VmWriter.writeArithmetic("+")
+            self.VmWriter.writePop("pointer", 1)
+            self.VmWriter.writePush("that", 0)
+            
             self.outFile.write(f"<symbol> {self.curToken} </symbol>\n")
             self.advance()
 
@@ -626,10 +607,6 @@ class JackCompilationEngine():
 
         else:
             # varName
-            #if self.symbTbl.subrSymTable.get(self.curToken):
-                #self.VmWriter.writePush(self.symbTbl.subrSymTable[self.curToken][0],self.symbTbl.subrSymTable[self.curToken][3])
-            #else:
-                #self.VmWriter.writePush(self.symbTbl.classSymTable[self.curToken][0],self.symbTbl.classSymTable[self.curToken][3])
             self.VmWriter.writePush(self.symbTbl.kindOf(self.curToken), self.symbTbl.indexOf(self.curToken))
             self.outFile.write(f"<identifier> {self.curToken} </identifier>\n")
             self.advance()

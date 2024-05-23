@@ -13,7 +13,6 @@ class VMWriter():
         self.outFile.write(f"pop {segment} {index}\n")
 
     def writeArithmetic(self, command):
-        # TODO: handle neg numbers and not
         if command == "+":
             self.outFile.write("add\n")
         elif command == "-":
@@ -32,7 +31,6 @@ class VMWriter():
             self.outFile.write("eq\n")
         elif command == "neg":
             self.outFile.write("neg\n")
-        #self.outFile.write(f"{command}\n")
 
     def writeLabel(self, label):
         self.outFile.write(f"label {label}\n")

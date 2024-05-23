@@ -1,7 +1,5 @@
 import JackTokenizer11 
 import JackCompilationEngine11
-import SymbolTable
-import VMWriter
 import sys, os
 
 class JackAnalyzer():
