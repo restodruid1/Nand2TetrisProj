@@ -16,11 +16,17 @@ class Main {
         let a = Array.new(10);
         let b = Array.new(5);
         let c = Array.new(1);
-        
+        //do Output.printInt(8);
         let a[3] = 2;
+        //do Output.printInt(a[3]);
         let a[4] = 8;
         let a[5] = 4;
+        //do Output.printInt(a[3]);
+        //do Output.printInt(a[4]);
+        //do Output.printInt(a[5]);
+        //do Output.printInt(b[2]);
         let b[a[3]] = a[3] + 3;  // b[2] = 5
+        //do Output.printInt(b[2]);
         let a[b[a[3]]] = a[a[5]] * b[((7 - a[3]) - Main.double(2)) + 1];  // a[5] = 8 * 5 = 40
         let c[0] = null;
         let c = c[0];

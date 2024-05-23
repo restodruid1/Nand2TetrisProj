@@ -1,1212 +1,310 @@
-<class>
-<keyword> class </keyword>
-function Square.constructor 2
-pop x 0
-pop y 1
-pop size 2
-call draw 0
+function Square.new 0
+push constant 3
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+pop this 0
+push argument 1
+pop this 1
+push argument 2
+pop this 2
+push pointer 0
+call Square.draw 1
+pop temp 0
+push pointer 0
+return
 function Square.dispose 0
+push argument 0
+pop pointer 0
+push pointer 0
 call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
 function Square.draw 0
-call Screen.setColor 2
-call Screen.drawRectangle 6
+push argument 0
+pop pointer 0
+push constant 1
+neg
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+push constant 0
+return
 function Square.erase 0
-call Screen.setColor 7
-call Screen.drawRectangle 11
+push argument 0
+pop pointer 0
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+push constant 0
+return
 function Square.incSize 0
-call erase 11
-pop size 2
-call draw 11
+push argument 0
+pop pointer 0
+push this 1
+push this 2
+add
+push constant 254
+lt
+push this 0
+push this 2
+add
+push constant 510
+lt
+and
+not
+if-goto el0
+push pointer 0
+call Square.erase 1
+pop temp 0
+push this 2
+push constant 2
+add
+pop this 2
+push pointer 0
+call Square.draw 1
+pop temp 0
+goto if0
+label el0
+label if0
+push constant 0
+return
 function Square.decSize 0
-call erase 11
-pop size 2
-call draw 11
+push argument 0
+pop pointer 0
+push this 2
+push constant 2
+gt
+not
+if-goto el1
+push pointer 0
+call Square.erase 1
+pop temp 0
+push this 2
+push constant 2
+sub
+pop this 2
+push pointer 0
+call Square.draw 1
+pop temp 0
+goto if1
+label el1
+label if1
+push constant 0
+return
 function Square.moveUp 0
-call Screen.setColor 12
-call Screen.drawRectangle 16
-pop y 1
-call Screen.setColor 17
-call Screen.drawRectangle 21
+push argument 0
+pop pointer 0
+push this 1
+push constant 1
+gt
+not
+if-goto el2
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 2
+add
+push constant 1
+sub
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+push this 1
+push constant 2
+sub
+pop this 1
+push constant 1
+neg
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push constant 1
+add
+call Screen.drawRectangle 4
+pop temp 0
+goto if2
+label el2
+label if2
+push constant 0
+return
 function Square.moveDown 0
-call Screen.setColor 22
-call Screen.drawRectangle 26
-pop y 1
-call Screen.setColor 27
-call Screen.drawRectangle 31
+push argument 0
+pop pointer 0
+push this 1
+push this 2
+add
+push constant 254
+lt
+not
+if-goto el3
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push constant 1
+add
+call Screen.drawRectangle 4
+pop temp 0
+push this 1
+push constant 2
+add
+pop this 1
+push constant 1
+neg
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 2
+add
+push constant 1
+sub
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+goto if3
+label el3
+label if3
+push constant 0
+return
 function Square.moveLeft 0
-call Screen.setColor 32
-call Screen.drawRectangle 36
-pop x 0
-call Screen.setColor 37
-call Screen.drawRectangle 41
+push argument 0
+pop pointer 0
+push this 0
+push constant 1
+gt
+not
+if-goto el4
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 2
+add
+push constant 1
+sub
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+push this 0
+push constant 2
+sub
+pop this 0
+push constant 1
+neg
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 0
+push constant 1
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+goto if4
+label el4
+label if4
+push constant 0
+return
 function Square.moveRight 0
-call Screen.setColor 42
-call Screen.drawRectangle 46
-pop x 0
-call Screen.setColor 47
-call Screen.drawRectangle 51
-ymbol>
-</letStatement>
-<letStatement>
-<keyword> let </keyword>
-<identifier> y </identifier>
-<symbol> = </symbol>
-<expression>
-<term>
-<identifier> ay </identifier>
-</term>
-</expression>
-<symbol> ; </symbol>
-</letStatement>
-<letStatement>
-<keyword> let </keyword>
-<identifier> size </identifier>
-<symbol> = </symbol>
-<expression>
-<term>
-<identifier> asize </identifier>
-</term>
-</expression>
-<symbol> ; </symbol>
-</letStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> draw </identifier>
-<symbol> ( </symbol>
-<expressionList>
- </expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<returnStatement>
-<keyword> return </keyword>
-<expression>
-<term>
-<keyword> this </keyword>
-</term>
-</expression>
-<symbol> ; </symbol>
-</returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
-<keyword> method </keyword>
-<keyword> void </keyword>
-<identifier> dispose </identifier>
-<symbol> ( </symbol>
-<parameterList>
- </parameterList>
-<symbol> ) </symbol>
-<subroutineBody>
-<symbol> { </symbol>
-<statements>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Memory </identifier>
-<symbol> . </symbol>
-<identifier> deAlloc </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> this </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<returnStatement>
-<keyword> return </keyword>
-<symbol> ; </symbol>
-</returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
-<keyword> method </keyword>
-<keyword> void </keyword>
-<identifier> draw </identifier>
-<symbol> ( </symbol>
-<parameterList>
- </parameterList>
-<symbol> ) </symbol>
-<subroutineBody>
-<symbol> { </symbol>
-<statements>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> setColor </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> true </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> drawRectangle </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<returnStatement>
-<keyword> return </keyword>
-<symbol> ; </symbol>
-</returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
-<keyword> method </keyword>
-<keyword> void </keyword>
-<identifier> erase </identifier>
-<symbol> ( </symbol>
-<parameterList>
- </parameterList>
-<symbol> ) </symbol>
-<subroutineBody>
-<symbol> { </symbol>
-<statements>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> setColor </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> false </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> drawRectangle </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<returnStatement>
-<keyword> return </keyword>
-<symbol> ; </symbol>
-</returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
-<keyword> method </keyword>
-<keyword> void </keyword>
-<identifier> incSize </identifier>
-<symbol> ( </symbol>
-<parameterList>
- </parameterList>
-<symbol> ) </symbol>
-<subroutineBody>
-<symbol> { </symbol>
-<statements>
-<ifStatement>
-<keyword> if </keyword>
-<symbol> ( </symbol>
-<expression>
-<term>
-<symbol> ( </symbol>
-<expression>
-<term>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> ) </symbol>
-</term>
-<symbol> < </symbol>
-<term>
-<integerConstant> 254 </integerConstant>
-</term>
-</expression>
-<symbol> ) </symbol>
-</term>
-<symbol> & </symbol>
-<term>
-<symbol> ( </symbol>
-<expression>
-<term>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> ) </symbol>
-</term>
-<symbol> < </symbol>
-<term>
-<integerConstant> 510 </integerConstant>
-</term>
-</expression>
-<symbol> ) </symbol>
-</term>
-</expression>
-<symbol> ) </symbol>
-<symbol> { </symbol>
-<statements>
-<doStatement>
-<keyword> do </keyword>
-<identifier> erase </identifier>
-<symbol> ( </symbol>
-<expressionList>
- </expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<letStatement>
-<keyword> let </keyword>
-<identifier> size </identifier>
-<symbol> = </symbol>
-<expression>
-<term>
-<identifier> size </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<integerConstant> 2 </integerConstant>
-</term>
-</expression>
-<symbol> ; </symbol>
-</letStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> draw </identifier>
-<symbol> ( </symbol>
-<expressionList>
- </expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-</statements>
-<symbol> } </symbol>
-</ifStatement>
-<returnStatement>
-<keyword> return </keyword>
-<symbol> ; </symbol>
-</returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
-<keyword> method </keyword>
-<keyword> void </keyword>
-<identifier> decSize </identifier>
-<symbol> ( </symbol>
-<parameterList>
- </parameterList>
-<symbol> ) </symbol>
-<subroutineBody>
-<symbol> { </symbol>
-<statements>
-<ifStatement>
-<keyword> if </keyword>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> size </identifier>
-</term>
-<symbol> > </symbol>
-<term>
-<integerConstant> 2 </integerConstant>
-</term>
-</expression>
-<symbol> ) </symbol>
-<symbol> { </symbol>
-<statements>
-<doStatement>
-<keyword> do </keyword>
-<identifier> erase </identifier>
-<symbol> ( </symbol>
-<expressionList>
- </expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<letStatement>
-<keyword> let </keyword>
-<identifier> size </identifier>
-<symbol> = </symbol>
-<expression>
-<term>
-<identifier> size </identifier>
-</term>
-<symbol> - </symbol>
-<term>
-<integerConstant> 2 </integerConstant>
-</term>
-</expression>
-<symbol> ; </symbol>
-</letStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> draw </identifier>
-<symbol> ( </symbol>
-<expressionList>
- </expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-</statements>
-<symbol> } </symbol>
-</ifStatement>
-<returnStatement>
-<keyword> return </keyword>
-<symbol> ; </symbol>
-</returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
-<keyword> method </keyword>
-<keyword> void </keyword>
-<identifier> moveUp </identifier>
-<symbol> ( </symbol>
-<parameterList>
- </parameterList>
-<symbol> ) </symbol>
-<subroutineBody>
-<symbol> { </symbol>
-<statements>
-<ifStatement>
-<keyword> if </keyword>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> > </symbol>
-<term>
-<integerConstant> 1 </integerConstant>
-</term>
-</expression>
-<symbol> ) </symbol>
-<symbol> { </symbol>
-<statements>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> setColor </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> false </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> drawRectangle </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> ) </symbol>
-</term>
-<symbol> - </symbol>
-<term>
-<integerConstant> 1 </integerConstant>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<letStatement>
-<keyword> let </keyword>
-<identifier> y </identifier>
-<symbol> = </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> - </symbol>
-<term>
-<integerConstant> 2 </integerConstant>
-</term>
-</expression>
-<symbol> ; </symbol>
-</letStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> setColor </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> true </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> drawRectangle </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<integerConstant> 1 </integerConstant>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-</statements>
-<symbol> } </symbol>
-</ifStatement>
-<returnStatement>
-<keyword> return </keyword>
-<symbol> ; </symbol>
-</returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
-<keyword> method </keyword>
-<keyword> void </keyword>
-<identifier> moveDown </identifier>
-<symbol> ( </symbol>
-<parameterList>
- </parameterList>
-<symbol> ) </symbol>
-<subroutineBody>
-<symbol> { </symbol>
-<statements>
-<ifStatement>
-<keyword> if </keyword>
-<symbol> ( </symbol>
-<expression>
-<term>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> ) </symbol>
-</term>
-<symbol> < </symbol>
-<term>
-<integerConstant> 254 </integerConstant>
-</term>
-</expression>
-<symbol> ) </symbol>
-<symbol> { </symbol>
-<statements>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> setColor </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> false </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> drawRectangle </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<integerConstant> 1 </integerConstant>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<letStatement>
-<keyword> let </keyword>
-<identifier> y </identifier>
-<symbol> = </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<integerConstant> 2 </integerConstant>
-</term>
-</expression>
-<symbol> ; </symbol>
-</letStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> setColor </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> true </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> drawRectangle </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> ) </symbol>
-</term>
-<symbol> - </symbol>
-<term>
-<integerConstant> 1 </integerConstant>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-</statements>
-<symbol> } </symbol>
-</ifStatement>
-<returnStatement>
-<keyword> return </keyword>
-<symbol> ; </symbol>
-</returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
-<keyword> method </keyword>
-<keyword> void </keyword>
-<identifier> moveLeft </identifier>
-<symbol> ( </symbol>
-<parameterList>
- </parameterList>
-<symbol> ) </symbol>
-<subroutineBody>
-<symbol> { </symbol>
-<statements>
-<ifStatement>
-<keyword> if </keyword>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> > </symbol>
-<term>
-<integerConstant> 1 </integerConstant>
-</term>
-</expression>
-<symbol> ) </symbol>
-<symbol> { </symbol>
-<statements>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> setColor </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> false </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> drawRectangle </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> ) </symbol>
-</term>
-<symbol> - </symbol>
-<term>
-<integerConstant> 1 </integerConstant>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<letStatement>
-<keyword> let </keyword>
-<identifier> x </identifier>
-<symbol> = </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> - </symbol>
-<term>
-<integerConstant> 2 </integerConstant>
-</term>
-</expression>
-<symbol> ; </symbol>
-</letStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> setColor </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> true </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> drawRectangle </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<integerConstant> 1 </integerConstant>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-</statements>
-<symbol> } </symbol>
-</ifStatement>
-<returnStatement>
-<keyword> return </keyword>
-<symbol> ; </symbol>
-</returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<subroutineDec>
-<keyword> method </keyword>
-<keyword> void </keyword>
-<identifier> moveRight </identifier>
-<symbol> ( </symbol>
-<parameterList>
- </parameterList>
-<symbol> ) </symbol>
-<subroutineBody>
-<symbol> { </symbol>
-<statements>
-<ifStatement>
-<keyword> if </keyword>
-<symbol> ( </symbol>
-<expression>
-<term>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> ) </symbol>
-</term>
-<symbol> < </symbol>
-<term>
-<integerConstant> 510 </integerConstant>
-</term>
-</expression>
-<symbol> ) </symbol>
-<symbol> { </symbol>
-<statements>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> setColor </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> false </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> drawRectangle </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<integerConstant> 1 </integerConstant>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<letStatement>
-<keyword> let </keyword>
-<identifier> x </identifier>
-<symbol> = </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<integerConstant> 2 </integerConstant>
-</term>
-</expression>
-<symbol> ; </symbol>
-</letStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> setColor </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<keyword> true </keyword>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-<doStatement>
-<keyword> do </keyword>
-<identifier> Screen </identifier>
-<symbol> . </symbol>
-<identifier> drawRectangle </identifier>
-<symbol> ( </symbol>
-<expressionList>
-<expression>
-<term>
-<symbol> ( </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> ) </symbol>
-</term>
-<symbol> - </symbol>
-<term>
-<integerConstant> 1 </integerConstant>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> x </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-<symbol> , </symbol>
-<expression>
-<term>
-<identifier> y </identifier>
-</term>
-<symbol> + </symbol>
-<term>
-<identifier> size </identifier>
-</term>
-</expression>
-</expressionList>
-<symbol> ) </symbol>
-<symbol> ; </symbol>
-</doStatement>
-</statements>
-<symbol> } </symbol>
-</ifStatement>
-<returnStatement>
-<keyword> return </keyword>
-<symbol> ; </symbol>
-</returnStatement>
-</statements>
-<symbol> } </symbol>
-</subroutineBody>
-</subroutineDec>
-<symbol> } </symbol>
-</class>
+push argument 0
+pop pointer 0
+push this 0
+push this 2
+add
+push constant 510
+lt
+not
+if-goto el5
+push constant 0
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 1
+push this 0
+push constant 1
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+push this 0
+push constant 2
+add
+pop this 0
+push constant 1
+neg
+call Screen.setColor 1
+pop temp 0
+push this 0
+push this 2
+add
+push constant 1
+sub
+push this 1
+push this 0
+push this 2
+add
+push this 1
+push this 2
+add
+call Screen.drawRectangle 4
+pop temp 0
+goto if5
+label el5
+label if5
+push constant 0
+return
